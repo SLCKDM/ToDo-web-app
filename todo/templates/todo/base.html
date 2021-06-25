@@ -1,0 +1,96 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'todo/main.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Title</title>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-md navbar-dark bg-primary">
+      <div class="container">
+        <img src="{% static 'todo/smiley-png-5a3a2715aa1176.0900633615137605336966.png' %}" class="mr-2" width="30"
+             height="30"
+           alt="">
+      <a class="navbar-brand" href="#">ToDo</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+             aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'home'%}">Home <span class="sr-only">(current)</span></a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'currenttodos'%}">Current ToDos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'completedtodos'%}">Completed ToDos</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'createtodo'%}">Create ToDo</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="text-right text-white float-left mr-1 mt-2" href="{% url 'profile'%}">Logged in
+              as {{ user.username }}</a>
+          </li>
+          {% if user.profile.profile_picture %}
+          <div class="ml-2 mr-2">
+            <svg width="40" height="40">
+              <pattern id="pattern" width="100%" height="100%">
+                <image xlink:href="{{ user.profile.profile_picture.url }}" width="40" height="40"
+                 preserveAspectRatio="xMidYMin slice"></image>
+              </pattern>
+              <circle cx="20" cy="20" r="20" fill="url(#pattern)"></circle>
+            </svg>
+          </div>
+          {% else %}
+             <p></p>
+          {% endif %}
+          <form class="form-inline" action="{% url 'logoutuser'%}" style="float: right;" method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-light">Logout</button>
+          </form>
+        </ul>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'signupuser' %}">Sign Up</a>
+              </li>
+            {% if request.path != '/signup/' %}
+              <ul class="navbar-nav mr-auto">
+                <form class="form-inline" method="POST" enctype="multipart/form-data">
+                  {% csrf_token %}
+                  <div class="form-group mx-sm-2 mb-2 ">
+                    <label for="id_username" class="sr-only">Login</label>
+                    <input type="text" class="form-control" name="username" autofocus="" autocapitalize="none" autocomplete="username"
+                           maxlength="150" required="" id="id_username" placeholder="Your login">
+                  </div>
+                  <div class="form-group mx-sm-2 mb-2">
+                    <label for="id_password" class="sr-only">Password</label>
+                    <input type="password" class="form-control" name="password" autocomplete="current-password" required="" id="id_password" placeholder="Password">
+                  </div>
+                  <button type="submit" class="btn btn-primary mb-2">Login</button>
+                  <p class="text-dark bg-danger">{{ error }}<p>
+                </form>
+              </ul>
+        {% endif %}
+    {% endif %}
+    </ul>
+  </div>
+</div>
+</nav>
+{% block content %} {% endblock %}
+
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+</html>

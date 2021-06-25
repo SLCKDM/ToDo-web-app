@@ -1,0 +1,26 @@
+{% extends 'todo/base.html' %}
+
+{% block content%}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-10">
+        <h2>Your completed ToDos</h2>
+    </div>
+</div>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-7">
+        <ul style="list-style: none;">
+            {% for todo in todos %}
+                <li>
+                    <div class="alert alert-{% if todo.important %}danger{% else %}primary{% endif %}" role="alert">
+                        <a href=" {% url 'viewtodo' todo.id %}">{% if todo.important %}<b>{% endif %}{{ todo.title }}
+                        {% if todo.important %}</b>{% endif %}
+                        <p>{% if todo.memo %}</p>
+                        {{ todo.memo }}{% endif %}</a>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+{% endblock %}

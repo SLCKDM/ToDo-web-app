@@ -1,0 +1,40 @@
+{% extends 'todo/base.html' %}
+
+{% block content%}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <h1>Sign up</h1>
+            {% if error %} <div class="alert alert-danger" role="alert"><h2>{{ error }}</h2></div> {% endif %}
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Username</span>
+                  </div>
+                    <input type="text" class="form-control" name="username" maxlength="150" autocapitalize="none" autocomplete="username"
+                       autofocus="" placeholder="Your username" required="" id="id_username">
+                  </div>
+                <span class="helptext">Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.</span>
+
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Password</span>
+                  </div>
+                    <input type="password" class="form-control" name="password1" placeholder="Type your password" autocomplete="new-password"
+                           required="" id="id_password1">
+                  </div>
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">Password</span>
+                  </div>
+                    <input type="password" class="form-control" name="password2"
+                           placeholder="Type your password once more"
+                           autocomplete="new-password" required="" id="id_password2">
+                  </div>
+                <span class="helptext">Enter the same password as before, for verification.</span><br>
+                <button type="submit" class="btn btn-primary">Sign Up</button>
+            </form>
+    </div>
+</div>
+{% endblock %}

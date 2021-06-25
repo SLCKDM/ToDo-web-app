@@ -1,0 +1,137 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
+from django.contrib import messages
+from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError, transaction
+from django.http import HttpResponseRedirect
+
+from .forms import TodoForm, UserForm, ProfileForm, UploadFileForm
+from .models import Todo
+
+
+def home(request):
+    return render(request, 'todo/home.html')
+
+
+def signupuser(request):
+    if request.method == "GET":
+        return render(request, 'todo/signupuser.html', {"form": UserCreationForm()})
+    else:
+        if request.POST['password1'] == request.POST['password2']:
+            try:
+                user = User.objects.create_user(request.POST['username'], password=request.POST['password1'])
+                user.save()
+                login(request, user)
+                return redirect('currenttodos')
+            except IntegrityError:
+                return render(request, 'todo/signupuser.html',
+                              {"form": UserCreationForm(), 'error': 'That username has already been taken'})
+        else:
+            return render(request, 'todo/signupuser.html',
+                          {"form": UserCreationForm(),
+                           'error': 'Passwords didn`t match'})
+
+
+def loginuser(request):
+    if request.method == "GET":
+        return render(request, 'todo/base.html', {"form": AuthenticationForm()})
+    else:
+        user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
+        if user is None:
+            return render(request, 'todo/base.html',
+                          {"form": AuthenticationForm(),
+                           'error': 'Such user doesn`t exist. Check your input'})
+        else:
+            login(request, user)
+            return redirect('currenttodos')
+
+
+@login_required
+def logoutuser(request):
+    if request.method == "POST":
+        logout(request)
+        return redirect('home')
+
+
+@login_required
+def createtodo(request):
+    if request.method == 'GET':
+        return render(request, 'todo/createtodo.html', {"form": TodoForm()})
+    else:
+        try:
+            form = TodoForm(request.POST)
+            newtodo = form.save(commit=False)
+            newtodo.user = request.user
+            newtodo.save()
+            return redirect('currenttodos')
+        except ValueError:
+            return render(request, 'todo/createtodo.html', {"form": TodoForm(), 'error': 'Bad data passed in'})
+
+
+@login_required
+def viewtodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)
+    if request.method == "GET":
+        form = TodoForm(instance=todo)
+        return render(request, 'todo/viewtodo.html', {'todo': todo, 'form': form})
+    else:
+        try:
+            form = TodoForm(request.POST, instance=todo)
+            form.save()
+            return redirect('currenttodos')
+        except ValueError:
+            return render(request, 'todo/viewtodo.html', {'todo': todo, 'form': form, 'error': 'Bad data passed in'})
+
+
+@login_required
+def completetodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)
+    if request.method == "POST":
+        todo.datecompleted = timezone.now()
+        todo.save()
+        return redirect('currenttodos')
+
+
+@login_required
+def deletetodo(request, todo_pk):
+    todo = get_object_or_404(Todo, pk=todo_pk, user=request.user)
+    if request.method == "POST":
+        todo.delete()
+        return redirect('currenttodos')
+
+
+@login_required
+def currenttodos(request):
+    todos = Todo.objects.filter(user=request.user, datecompleted__isnull=True)
+    return render(request, 'todo/currenttodos.html', {'todos': todos})
+
+
+@login_required
+def completedtodos(request):
+    todos = Todo.objects.filter(user=request.user, datecompleted__isnull=False).order_by('-datecompleted')
+    return render(request, 'todo/completedtodos.html', {'todos': todos})
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    user = request.user
+    u_form = UserForm(request.POST, request.FILES, instance=user)
+    p_form = ProfileForm(request.POST, request.FILES, instance=user.profile)
+    if request.method == 'POST':
+        if u_form.is_valid() and p_form.is_valid():
+            print("нет ашибка")
+            p_form.save()
+            u_form.save()
+            messages.success(request, 'Your Profile has been updated!')
+            return redirect('profile')
+        else:
+            print('ашибка в форме')
+            messages.error(request, 'Please correct the error below.')
+
+    context = {'p_form': p_form, 'u_form': u_form}
+    return render(request, 'todo/profile.html', context)
+

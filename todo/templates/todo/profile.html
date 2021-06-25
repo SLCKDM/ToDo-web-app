@@ -1,0 +1,72 @@
+{% extends 'todo/base.html' %}
+{% block content %}
+
+<div class="info_box justify-content-center px-5 mt-3 mr-5 ml-5">
+    <div class="row">
+    <div class="col-md-8 px-1   ">
+        <form method="post" enctype="multipart/form-data" action="{% url 'profile' %}">
+            {%csrf_token%}
+
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                {% for field, errors in form.errors.items %}
+                {% for error in errors %}
+                <b>{{ field }}</b>: {{ error }}
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+
+
+            <p>Username : <input type="text" class="form-control" value="{{ user.username }}" name="username"
+                                 maxlength="150"
+                                 autocapitalize="none"
+                                 autocomplete="{{ user.username }}"
+                                 autofocus="" placeholder="your username" required="" id="id_username"></p>
+            <p>First name : <input type="text" class="form-control" value="{{ user.first_name }}"
+                                   name="first_name"
+                                   maxlength="150"
+                                   autocapitalize="none"
+                                   autocomplete="{{ user.first_name }}"
+                                   autofocus="" placeholder="your first name" id="id_first_name"></p>
+
+            <p>Last name : <input type="text" class="form-control" value="{{ user.last_name }}" name="last_name"
+                                  maxlength="150"
+                                  autocapitalize="none"
+                                  autocomplete="{{ user.last_name }}"
+                                  autofocus="" placeholder="your last name" id="id_last_name"></p>
+            <p>E-mail : <input type="email" class="form-control" value="{{ user.email }}" name="email" maxlength="150"
+                               autocapitalize="none"
+                               autocomplete="{{ user.email }}"
+                               autofocus="" placeholder="your Email" required="" id="email"></p>
+            <p>bio : <input type="text" class="form-control" value="{{ user.profile.bio }}" name="bio"
+                               maxlength="150"
+                               autocapitalize="none"
+                               autocomplete="{{ user.profile.bio }}"
+                               autofocus="" placeholder="your bio" id="bio"></p>
+<!--            <p>Birth : <input type="text" class="form-control" value="{{ user.profile.birth_date|date:'m/d/Y' }}"-->
+<!--                              name="id_birth_date"-->
+<!--                              maxlength="150"-->
+<!--                              autocapitalize="none"-->
+<!--                              autocomplete="{{ p_form.birth_date|date:'m/d/Y' }}"-->
+<!--                              autofocus="" placeholder="your birth date" id="birth_date"></p>-->
+    </div>
+    <div class="col-md-4 pt-1">
+        <p>Profile picture : </p>
+        {% if user.profile.profile_picture %}
+              <img src="{{ user.profile.profile_picture.url }}"
+                   class="rounded-circle"
+                   style="width: 300px; height: 300px; object-fit: cover; object-position: 50% 0; float: left;">
+        {% else %}
+            <p></p>
+        {% endif %}
+                <input type="file" name="profile_picture" accept="image/*" id="profile_picture">
+    </div>
+            <button type="submit" class="btn btn-primary mx-5 d-inline text-white">Save</button>
+        </form>
+        {{ image }}
+    </div>
+	</div>
+</div>
+</div>
+{% endblock %}

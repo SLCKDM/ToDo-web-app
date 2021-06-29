@@ -24,7 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # auth
     path('signup/', views.signupuser, name='signupuser'),
-    path('', views.loginuser, name='loginuser'),
+    path('home/', views.loginuser, name='loginuser'),
     path('logout/', views.logoutuser, name='logoutuser'),
     # todos
     path('create/', views.createtodo, name='createtodo'),
@@ -33,7 +33,6 @@ urlpatterns = [
     path('todo/<int:todo_pk>/', views.viewtodo, name='viewtodo'),
     path('todo/<int:todo_pk>/complete', views.completetodo, name='completetodo'),
     path('todo/<int:todo_pk>/delete', views.deletetodo, name='deletetodo'),
-    path('', views.home, name='home'),
     path('profile/', views.update_profile, name="profile"),
 
 ]

@@ -41,7 +41,7 @@ def loginuser(request):
     else:
         user = authenticate(request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            return render(request, 'todo/base.html',
+            return render(request, 'todo/home.html',
                           {"form": AuthenticationForm(),
                            'error': 'Such user doesn`t exist. Check your input'})
         else:
@@ -53,7 +53,7 @@ def loginuser(request):
 def logoutuser(request):
     if request.method == "POST":
         logout(request)
-        return redirect('home')
+        return redirect('loginuser')
 
 
 @login_required

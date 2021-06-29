@@ -1,9 +1,9 @@
 {% extends 'todo/base.html' %}
 {% block content %}
 
-<div class="info_box justify-content-center px-5 mt-3 mr-5 ml-5">
+<div class="info_box justify-content-center px-5 mt-3 mr-2 ml-2">
     <div class="row">
-    <div class="col-md-8 px-1   ">
+    <div class="col-md-7">
         <form method="post" enctype="multipart/form-data" action="{% url 'profile' %}">
             {%csrf_token%}
 
@@ -29,7 +29,6 @@
                                    autocapitalize="none"
                                    autocomplete="{{ user.first_name }}"
                                    autofocus="" placeholder="your first name" id="id_first_name"></p>
-
             <p>Last name : <input type="text" class="form-control" value="{{ user.last_name }}" name="last_name"
                                   maxlength="150"
                                   autocapitalize="none"
@@ -51,18 +50,20 @@
 <!--                              autocomplete="{{ p_form.birth_date|date:'m/d/Y' }}"-->
 <!--                              autofocus="" placeholder="your birth date" id="birth_date"></p>-->
     </div>
-    <div class="col-md-4 pt-1">
+    <div class="col-md-4 pt-4 text-center" style="display: block; margin-left: auto; margin-right: auto;">
         <p>Profile picture : </p>
         {% if user.profile.profile_picture %}
               <img src="{{ user.profile.profile_picture.url }}"
-                   class="rounded-circle"
-                   style="width: 300px; height: 300px; object-fit: cover; object-position: 50% 0; float: left;">
+                   class="rounded-circle center-block"
+                   style="max-width: 100%; height: auto; object-fit: cover">
         {% else %}
             <p></p>
         {% endif %}
-                <input type="file" name="profile_picture" accept="image/*" id="profile_picture">
+                <input type="file" class="mt-4" name="profile_picture" accept="image/*" id="profile_picture">
     </div>
-            <button type="submit" class="btn btn-primary mx-5 d-inline text-white">Save</button>
+        <div class="col-md-12 text-center">
+            <button type="submit" class="btn btn-primary mt-4 mx-5 center-block text-white">Save</button>
+        </div>
         </form>
         {{ image }}
     </div>
